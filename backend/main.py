@@ -22,11 +22,15 @@ def read_root():
 @app.get("/commitments")
 def get_commitments_by_investor(
     investor_name: str = Query(None, description="Name of the investor"),
+    asset_class: str = Query(None, description="Type of asset class"),
     db: Session = Depends(get_db)
 ):
     query = db.query(Commitment)
     if investor_name:
         query = query.filter_by(investor_name=investor_name)
+
+    if asset_class:
+        query = query.filter_by(asset_class=asset_class)
     
     commitments = query.all()
     return commitments
