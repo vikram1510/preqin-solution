@@ -1,14 +1,19 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import App from "./App.tsx"
 import "./index.css"
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { Investors } from "./routes/investors/Investors.tsx"
+import { Commitments } from "./routes/commitments/Commitments.tsx"
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Investors />,
+  },
+  {
+    path: "/commitments/:investorId",
+    element: <Commitments />,
   },
 ])
 
