@@ -1,4 +1,11 @@
+import { useEffect } from "react"
+
 export const Investors = () => {
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/commitments/aggregate")
+      .then((res) => res.json())
+      .then(console.log)
+  }, [])
   return (
     <div className="centered-container">
       <h1>Investors</h1>

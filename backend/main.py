@@ -1,6 +1,7 @@
 from models import Base, Commitment
 from db import get_db, engine
 from fastapi import FastAPI, Depends, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -12,6 +13,11 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+)
 
 
 @app.get("/")
