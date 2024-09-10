@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     element: <Investors />,
   },
   {
-    path: "/commitments/:investorId",
+    path: "/commitments",
     element: <Commitments />,
   },
 ])

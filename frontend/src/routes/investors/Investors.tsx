@@ -1,4 +1,5 @@
-import { useFetchInvestors } from "../../hooks/useFetchInvestors"
+import { InvestorItem } from "./components/InvestorItem"
+import { useFetchInvestors } from "./hooks/useFetchInvestors"
 
 export const Investors = () => {
   const { data, loading } = useFetchInvestors()
@@ -21,12 +22,7 @@ export const Investors = () => {
         </thead>
         <tbody>
           {data.map((investor) => (
-            <tr key={investor.investor_name}>
-              <th>{investor.investor_name}</th>
-              <th>{investor.investor_type}</th>
-              <th>{investor.investor_country}</th>
-              <th>{investor.total_commitment}</th>
-            </tr>
+            <InvestorItem key={investor.investor_name} investor={investor} />
           ))}
         </tbody>
       </table>
