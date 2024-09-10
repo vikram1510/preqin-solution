@@ -45,28 +45,20 @@ def get_commitments_by_investor(
 @app.get("/commitments/aggregate")
 def get_aggregated_data(db: Session = Depends(get_db)):
     result = db.query(
-        Commitment.id,
         Commitment.investor_name,
         Commitment.investor_type,
-        Commitment.date_added,
         Commitment.investor_country,
         func.sum(Commitment.amount).label('total_commitment')
     ).group_by(
-        Commitment.id,
-        Commitment.investor_name,
-        Commitment.investor_type,
-        Commitment.date_added,
-        Commitment.investor_country
+        Commitment.investor_name
     ).all()
     
     aggregated_data = [
         {
-            "id": row[0],
-            "investor_name": row[1],
-            "investor_type": row[2],
-            "date_added": row[3].strftime('%Y-%m-%d'),
-            "investor_country": row[4],
-            "total_commitment": row[5]
+            "investor_name": row[0],
+            "investor_type": row[1],
+            "investor_country": row[2],
+            "total_commitment": row[3]
         }
         for row in result
     ]
