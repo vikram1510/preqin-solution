@@ -4,8 +4,6 @@ from models import Commitment
 from db import engine, SessionLocal, Base
 from datetime import datetime
 
-
-
 def load_data_from_csv(file_path: str):
     Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
@@ -13,7 +11,6 @@ def load_data_from_csv(file_path: str):
         with open(file_path, mode='r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                print(row)
                 commitment = Commitment(
                     investor_name=row['Investor Name'],
                     investor_type=row['Investor Type'],
