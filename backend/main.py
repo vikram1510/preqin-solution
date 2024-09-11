@@ -42,7 +42,7 @@ def get_commitments_by_investor(
     return commitments
 
 
-@app.get("/commitments/aggregate")
+@app.get("/investors")
 def get_aggregated_data(db: Session = Depends(get_db)):
     result = db.query(
         Commitment.investor_name,
