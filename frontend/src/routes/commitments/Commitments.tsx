@@ -15,9 +15,9 @@ export const Commitments = () => {
   const { search } = useLocation()
   const investorName = investorNameFromSearchParams(search)
 
-  const { data, loading } = useFetch<Commitment[]>(
-    `${COMMITTMENTS_API_URL}?${filterParams(search, filterAsset)}`
-  )
+  const { data: commitmentsData, loading: commitmentsDataLoading } = useFetch<
+    Commitment[]
+  >(`${COMMITTMENTS_API_URL}?${filterParams(search, filterAsset)}`)
 
   const { data: assetClassData, loading: assetClassDataLoading } = useFetch<
     AssetClassItem[]
@@ -27,9 +27,9 @@ export const Commitments = () => {
     setFilterAsset(e.target.value)
   }
 
-  if (loading || assetClassDataLoading) return <p>Loading...</p>
+  if (commitmentsDataLoading || assetClassDataLoading) return <p>Loading...</p>
 
-  if (!data || !assetClassData) return <p>Error</p>
+  if (!commitmentsData || !assetClassData) return <p>Error</p>
 
   return (
     <div className="centered-container">
@@ -60,7 +60,7 @@ export const Commitments = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((commitment) => (
+          {commitmentsData.map((commitment) => (
             <tr key={commitment.id}>
               <th>{commitment.id}</th>
               <th>{commitment.asset_class}</th>
