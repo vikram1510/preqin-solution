@@ -9,3 +9,8 @@ export type Commitment = {
   last_updated: string
   amount: number
 }
+
+export type AssetClassItem = {
+  name: string
+  totalCommitments: number
+}

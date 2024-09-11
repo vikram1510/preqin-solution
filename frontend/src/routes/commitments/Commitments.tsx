@@ -3,8 +3,12 @@ import { useFetch } from "../../hooks/useFetch"
 import { COMMITTMENTS_API_URL } from "../../constants"
 import { Commitment } from "./types"
 import { investorNameFromSearchParams } from "./utils/investorNameFromSearchParams"
+import { aggregateByAssetClass } from "./utils/aggregateByAssetClass"
+import { useState } from "react"
+import "./assetClass.css"
 
 export const Commitments = () => {
+  const [filterAsset, setFilterAsset] = useState("all")
   const { search } = useLocation()
   const { data, loading } = useFetch<Commitment[]>(
     `${COMMITTMENTS_API_URL}${search}`
@@ -15,9 +19,30 @@ export const Commitments = () => {
 
   if (!data) return <p>Error</p>
 
+  const assetClassItems = aggregateByAssetClass(data)
+
   return (
     <div className="centered-container">
       <h1>{`Commitments for Investor - ${investorName}`}</h1>
+      <div className="asset-class-container">
+        {assetClassItems.map((assetClass) => (
+          <label
+            key={assetClass.name}
+            className={`card ${
+              filterAsset === assetClass.name ? "selected" : ""
+            }`}
+          >
+            <input
+              type="radio"
+              name="assetClass"
+              value={assetClass.name}
+              checked={filterAsset === assetClass.name}
+              // onChange={() => handleSelect(assetClass)}
+            />
+            <span className="card-content">{assetClass.name}</span>
+          </label>
+        ))}
+      </div>
       <table border={1}>
         <thead>
           <tr>
