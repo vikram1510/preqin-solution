@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Investor } from "../types"
+import { toGBP } from "../../../utils/toGbp"
 
 type InvestorItemProps = {
   investor: Investor
@@ -18,7 +19,7 @@ export const InvestorItem = (props: InvestorItemProps) => {
       <th>{props.investor.investor_name}</th>
       <th>{props.investor.investor_type}</th>
       <th>{props.investor.investor_country}</th>
-      <th>{props.investor.total_commitment}</th>
+      <th>{toGBP(props.investor.total_commitment)}</th>
     </tr>
   )
 }

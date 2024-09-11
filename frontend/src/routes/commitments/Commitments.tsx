@@ -8,11 +8,12 @@ import { AssetFilterCard } from "./components/AssetFilterCard"
 import "./components/assetClass.css"
 import { filterParams } from "./utils/filterParams"
 import { totalCommitment } from "./utils/totalCommitment"
+import { toGBP } from "../../utils/toGbp"
 
 export const Commitments = () => {
+  const [filterAsset, setFilterAsset] = useState("All")
   const { search } = useLocation()
   const investorName = investorNameFromSearchParams(search)
-  const [filterAsset, setFilterAsset] = useState("All")
 
   const { data, loading } = useFetch<Commitment[]>(
     `${COMMITTMENTS_API_URL}?${filterParams(search, filterAsset)}`
@@ -26,30 +27,25 @@ export const Commitments = () => {
     setFilterAsset(e.target.value)
   }
 
-  console.log({ assetClassData })
-
   if (loading || assetClassDataLoading) return <p>Loading...</p>
 
   if (!data || !assetClassData) return <p>Error</p>
-
-  console.log({ assetClassData, assetClassDataLoading })
 
   return (
     <div className="centered-container">
       <h1>{`Commitments for Investor - ${investorName}`}</h1>
       <div className="asset-class-container">
         <AssetFilterCard
-          assetClassItem={{
-            asset_class_name: "All",
-            total_commitment: totalCommitment(assetClassData),
-          }}
+          assetClassName="All"
+          totalCommitment={toGBP(totalCommitment(assetClassData))}
           isSelected={filterAsset === "All"}
           onChange={handleChange}
         />
         {assetClassData.map((assetClassItem) => (
           <AssetFilterCard
             key={assetClassItem.asset_class_name}
-            assetClassItem={assetClassItem}
+            assetClassName={assetClassItem.asset_class_name}
+            totalCommitment={toGBP(assetClassItem.total_commitment)}
             isSelected={filterAsset === assetClassItem.asset_class_name}
             onChange={handleChange}
           />
@@ -68,7 +64,7 @@ export const Commitments = () => {
             <tr key={commitment.id}>
               <th>{commitment.id}</th>
               <th>{commitment.asset_class}</th>
-              <th>{commitment.amount}</th>
+              <th>{toGBP(commitment.amount)}</th>
             </tr>
           ))}
         </tbody>

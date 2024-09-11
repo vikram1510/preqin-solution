@@ -1,8 +1,8 @@
 import { ChangeEvent } from "react"
-import { AssetClassItem } from "../types"
 
 type AssetFilterCardProps = {
-  assetClassItem: AssetClassItem
+  assetClassName: string
+  totalCommitment: string
   isSelected: boolean
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
@@ -13,12 +13,12 @@ export const AssetFilterCard = (props: AssetFilterCardProps) => {
       <input
         type="radio"
         name="assetClass"
-        value={props.assetClassItem.asset_class_name}
+        value={props.assetClassName}
         checked={props.isSelected}
         onChange={props.onChange}
       />
       <span className="card-content">
-        {`${props.assetClassItem.asset_class_name} (${props.assetClassItem.total_commitment})`}
+        {`${props.assetClassName} (${props.totalCommitment})`}
       </span>
     </label>
   )
