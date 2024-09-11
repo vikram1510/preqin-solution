@@ -11,6 +11,6 @@ export type Commitment = {
 }
 
 export type AssetClassItem = {
-  name: string
-  totalCommitments: number
+  asset_class_name: string
+  total_commitment: number
 }

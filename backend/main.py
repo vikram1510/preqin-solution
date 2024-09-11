@@ -1,6 +1,6 @@
 from models import Base, Commitment
 from db import get_db, engine
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
 from sqlalchemy.orm import Session
@@ -63,3 +63,29 @@ def get_aggregated_data(db: Session = Depends(get_db)):
         for row in result
     ]
     return aggregated_data
+
+
+
+@app.get("/asset-classes")
+def get_asset_classes(
+    investor_name: str = Query(None, description="Name of the investor"),
+    db: Session = Depends(get_db)
+):
+    result = (
+        db.query(
+            Commitment.asset_class,
+            func.sum(Commitment.amount).label('total_commitment')
+        )
+        .filter_by(investor_name=investor_name)
+        .group_by(Commitment.asset_class)
+        .all()
+    )
+
+    if not result:
+        raise HTTPException(status_code=404, detail="No data found for the given investor")
+    
+    return [
+        {"asset_class_name": row.asset_class, "total_commitment": row.total_commitment} 
+        for row in result
+    ]
+

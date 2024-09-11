@@ -1,46 +1,58 @@
 import { useLocation } from "react-router-dom"
 import { useFetch } from "../../hooks/useFetch"
-import { COMMITTMENTS_API_URL } from "../../constants"
-import { Commitment } from "./types"
+import { ASSET_CLASSES_API_URL, COMMITTMENTS_API_URL } from "../../constants"
+import { AssetClassItem, Commitment } from "./types"
 import { investorNameFromSearchParams } from "./utils/investorNameFromSearchParams"
-import { aggregateByAssetClass } from "./utils/aggregateByAssetClass"
-import { useState } from "react"
-import "./assetClass.css"
+import { ChangeEvent, useState } from "react"
+import { AssetFilterCard } from "./components/AssetFilterCard"
+import "./components/assetClass.css"
+import { filterParams } from "./utils/filterParams"
+import { totalCommitment } from "./utils/totalCommitment"
 
 export const Commitments = () => {
-  const [filterAsset, setFilterAsset] = useState("all")
   const { search } = useLocation()
-  const { data, loading } = useFetch<Commitment[]>(
-    `${COMMITTMENTS_API_URL}${search}`
-  )
   const investorName = investorNameFromSearchParams(search)
+  const [filterAsset, setFilterAsset] = useState("All")
 
-  if (loading) return <p>Loading...</p>
+  const { data, loading } = useFetch<Commitment[]>(
+    `${COMMITTMENTS_API_URL}?${filterParams(search, filterAsset)}`
+  )
 
-  if (!data) return <p>Error</p>
+  const { data: assetClassData, loading: assetClassDataLoading } = useFetch<
+    AssetClassItem[]
+  >(`${ASSET_CLASSES_API_URL}?investor_name=${investorName}`)
 
-  const assetClassItems = aggregateByAssetClass(data)
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilterAsset(e.target.value)
+  }
+
+  console.log({ assetClassData })
+
+  if (loading || assetClassDataLoading) return <p>Loading...</p>
+
+  if (!data || !assetClassData) return <p>Error</p>
+
+  console.log({ assetClassData, assetClassDataLoading })
 
   return (
     <div className="centered-container">
       <h1>{`Commitments for Investor - ${investorName}`}</h1>
       <div className="asset-class-container">
-        {assetClassItems.map((assetClass) => (
-          <label
-            key={assetClass.name}
-            className={`card ${
-              filterAsset === assetClass.name ? "selected" : ""
-            }`}
-          >
-            <input
-              type="radio"
-              name="assetClass"
-              value={assetClass.name}
-              checked={filterAsset === assetClass.name}
-              // onChange={() => handleSelect(assetClass)}
-            />
-            <span className="card-content">{assetClass.name}</span>
-          </label>
+        <AssetFilterCard
+          assetClassItem={{
+            asset_class_name: "All",
+            total_commitment: totalCommitment(assetClassData),
+          }}
+          isSelected={filterAsset === "All"}
+          onChange={handleChange}
+        />
+        {assetClassData.map((assetClassItem) => (
+          <AssetFilterCard
+            key={assetClassItem.asset_class_name}
+            assetClassItem={assetClassItem}
+            isSelected={filterAsset === assetClassItem.asset_class_name}
+            onChange={handleChange}
+          />
         ))}
       </div>
       <table border={1}>
